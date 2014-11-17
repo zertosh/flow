@@ -22,8 +22,19 @@ var ReactPropTypes = React.PropTypes;
 var ThreadListItem = React.createClass({
 
   propTypes: {
-    thread: ReactPropTypes.object,
-    currentThreadID: ReactPropTypes.string
+    thread: ReactPropTypes.shape({
+      id: ReactPropTypes.string.isRequired,
+      name: ReactPropTypes.string.isRequired,
+      lastMessage: ReactPropTypes.shape({
+        id: ReactPropTypes.string,
+        authorName: ReactPropTypes.string,
+        threadID: ReactPropTypes.string,
+        text: ReactPropTypes.string.isRequired,
+        date: ReactPropTypes.instanceOf(Date).isRequired,
+        isRead: ReactPropTypes.bool
+      }).isRequired
+    }).isRequired,
+    currentThreadID: ReactPropTypes.string.isRequired
   },
 
   render: function(): any {

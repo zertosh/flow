@@ -20,7 +20,11 @@ var ReactPropTypes = React.PropTypes;
 var MessageListItem = React.createClass({
 
   propTypes: {
-    message: ReactPropTypes.object
+    message: ReactPropTypes.shape({
+      authorName: ReactPropTypes.string.isRequired,
+      date: ReactPropTypes.instanceOf(Date).isRequired,
+      text: ReactPropTypes.string.isRequired
+    }).isRequired
   },
 
   render: function(): any {
