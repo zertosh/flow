@@ -20,11 +20,11 @@ var ENTER_KEY_CODE = 13;
 
 var MessageComposer = React.createClass({
 
-  getInitialState: function() {
+  getInitialState: function(): {text: string; } {
     return {text: ''};
   },
 
-  render: function() {
+  render: function(): any {
     return (
       <textarea
         className="message-composer"
@@ -36,11 +36,11 @@ var MessageComposer = React.createClass({
     );
   },
 
-  _onChange: function(event, value) {
+  _onChange: function(event: any, value: any) {
     this.setState({text: event.target.value});
   },
 
-  _onKeyDown: function(event) {
+  _onKeyDown: function(event: any) {
     if (event.keyCode === ENTER_KEY_CODE) {
       event.preventDefault();
       var text = this.state.text.trim();

@@ -23,7 +23,7 @@ var MessageListItem = React.createClass({
     message: ReactPropTypes.object
   },
 
-  render: function() {
+  render: function(): any {
     var message = this.props.message;
     return (
       <li className="message-list-item">

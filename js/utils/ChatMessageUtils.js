@@ -13,9 +13,27 @@
  *
  */
 
+type RawMessage = {
+  id: string;
+  threadID: string;
+  authorName: string;
+  timestamp: number;
+  text: string;
+};
+
+type ConvertedMessage = {
+  id: string;
+  threadID: string;
+  authorName: string;
+  date: Date;
+  text: string;
+  isRead: boolean;
+};
+
 module.exports = {
 
-  convertRawMessage: function(rawMessage, currentThreadID) {
+  convertRawMessage: function(rawMessage: RawMessage,
+                              currentThreadID: ?string): ConvertedMessage {
     return {
       id: rawMessage.id,
       threadID: rawMessage.threadID,

@@ -19,6 +19,8 @@ var EventEmitter = require('../events').EventEmitter;
 var MessageStore = require('../stores/MessageStore');
 var ThreadStore = require('../stores/ThreadStore');
 
+type Callback = () => void;
+
 var ActionTypes = ChatConstants.ActionTypes;
 var CHANGE_EVENT = 'change';
 
@@ -31,18 +33,18 @@ var UnreadThreadStore = Object.assign({}, EventEmitter.prototype, {
   /**
    * @param {function} callback
    */
-  addChangeListener: function(callback) {
+  addChangeListener: function(callback: Callback) {
     this.on(CHANGE_EVENT, callback);
   },
 
   /**
    * @param {function} callback
    */
-  removeChangeListener: function(callback) {
+  removeChangeListener: function(callback: Callback) {
     this.removeListener(CHANGE_EVENT, callback);
   },
 
-  getCount: function() {
+  getCount: function(): number {
     var threads = ThreadStore.getAll();
     var unreadCount = 0;
     for (var id in threads) {
@@ -55,7 +57,8 @@ var UnreadThreadStore = Object.assign({}, EventEmitter.prototype, {
 
 });
 
-UnreadThreadStore.dispatchToken = ChatAppDispatcher.register(function(payload) {
+UnreadThreadStore.dispatchToken =
+ChatAppDispatcher.register(function(payload: any) {
   ChatAppDispatcher.waitFor([
     ThreadStore.dispatchToken,
     MessageStore.dispatchToken

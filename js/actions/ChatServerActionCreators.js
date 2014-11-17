@@ -18,16 +18,24 @@ var ChatConstants = require('../constants/ChatConstants');
 
 var ActionTypes = ChatConstants.ActionTypes;
 
+type RawMessage = {
+  id: string;
+  threadID: string;
+  authorName: string;
+  timestamp: number;
+  text: string;
+};
+
 module.exports = {
 
-  receiveAll: function(rawMessages) {
+  receiveAll: function(rawMessages: Array<RawMessage>) {
     ChatAppDispatcher.handleServerAction({
       type: ActionTypes.RECEIVE_RAW_MESSAGES,
       rawMessages: rawMessages
     });
   },
 
-  receiveCreatedMessage: function(createdMessage) {
+  receiveCreatedMessage: function(createdMessage: RawMessage) {
     ChatAppDispatcher.handleServerAction({
       type: ActionTypes.RECEIVE_RAW_CREATED_MESSAGE,
       rawMessage: createdMessage
