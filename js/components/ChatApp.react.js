@@ -19,7 +19,7 @@ var ThreadSection = require('./ThreadSection.react');
 
 var ChatApp = React.createClass({
 
-  render: function() {
+  render: function(): any {
     return (
       <div className="chatapp">
         <ThreadSection />

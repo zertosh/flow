@@ -19,10 +19,34 @@ var ChatMessageUtils = require('../utils/ChatMessageUtils');
 var EventEmitter = require('events').EventEmitter;
 var ThreadStore = require('../stores/ThreadStore');
 
+type Message = {
+  id: string;
+  threadID: string;
+  authorName: string;
+  date: Date;
+  text: string;
+  isRead: boolean;
+};
+
+type MessageMap = {
+  [index: string]: Message;
+};
+
+type Callback = () => void;
+
+type CreatedMessage = {
+  id: string;
+  threadID: ?string;
+  authorName: string;
+  date: Date;
+  text: string;
+  isRead: boolean;
+};
+
 var ActionTypes = ChatConstants.ActionTypes;
 var CHANGE_EVENT = 'change';
 
-var _messages = {};
+var _messages: MessageMap = {};
 
 function _addMessages(rawMessages) {
   rawMessages.forEach(function(message) {
@@ -52,22 +76,22 @@ var MessageStore = Object.assign({}, EventEmitter.prototype, {
   /**
    * @param {function} callback
    */
-  addChangeListener: function(callback) {
+  addChangeListener: function(callback: Callback) {
     this.on(CHANGE_EVENT, callback);
   },
 
-  get: function(id) {
+  get: function(id: string): ?Message {
     return _messages[id];
   },
 
-  getAll: function() {
+  getAll: function(): MessageMap {
     return _messages;
   },
 
   /**
    * @param {string} threadID
    */
-  getAllForThread: function(threadID) {
+  getAllForThread: function(threadID: string): Array<Message> {
     var threadMessages = [];
     for (var id in _messages) {
       if (_messages[id].threadID === threadID) {
@@ -85,11 +109,11 @@ var MessageStore = Object.assign({}, EventEmitter.prototype, {
     return threadMessages;
   },
 
-  getAllForCurrentThread: function() {
+  getAllForCurrentThread: function(): Array<Message> {
     return this.getAllForThread(ThreadStore.getCurrentID());
   },
 
-  getCreatedMessageData: function(text) {
+  getCreatedMessageData: function(text: string): CreatedMessage {
     var timestamp = Date.now();
     return {
       id: 'm_' + timestamp,
@@ -103,7 +127,7 @@ var MessageStore = Object.assign({}, EventEmitter.prototype, {
 
 });
 
-MessageStore.dispatchToken = ChatAppDispatcher.register(function(payload) {
+MessageStore.dispatchToken = ChatAppDispatcher.register(function(payload: any) {
   var action = payload.action;
 
   switch(action.type) {

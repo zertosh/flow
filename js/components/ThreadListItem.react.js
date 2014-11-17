@@ -24,7 +24,7 @@ var ThreadListItem = React.createClass({
     currentThreadID: ReactPropTypes.string
   },
 
-  render: function() {
+  render: function(): any {
     var thread = this.props.thread;
     var lastMessage = thread.lastMessage;
     return (

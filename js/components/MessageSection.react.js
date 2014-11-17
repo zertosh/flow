@@ -19,6 +19,26 @@ var MessageStore = require('../stores/MessageStore');
 var React = require('react');
 var ThreadStore = require('../stores/ThreadStore');
 
+type Message = {
+  id: string;
+  threadID: string;
+  authorName: string;
+  date: Date;
+  text: string;
+  isRead: boolean;
+};
+
+type Thread = {
+  id: string;
+  name: string;
+  lastMessage: Message;
+};
+
+type MessageSectionState = {
+  messages: Array<Message>;
+  thread: ?Thread;
+};
+
 function getStateFromStores() {
   return {
     messages: MessageStore.getAllForCurrentThread(),
@@ -37,7 +57,7 @@ function getMessageListItem(message) {
 
 var MessageSection = React.createClass({
 
-  getInitialState: function() {
+  getInitialState: function(): MessageSectionState {
     return getStateFromStores();
   },
 
@@ -52,7 +72,7 @@ var MessageSection = React.createClass({
     ThreadStore.removeChangeListener(this._onChange);
   },
 
-  render: function() {
+  render: function(): any {
     var messageListItems = this.state.messages.map(getMessageListItem);
     return (
       <div className="message-section">

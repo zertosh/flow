@@ -22,7 +22,7 @@ var ActionTypes = ChatConstants.ActionTypes;
 
 module.exports = {
 
-  createMessage: function(text) {
+  createMessage: function(text: string) {
     ChatAppDispatcher.handleViewAction({
       type: ActionTypes.CREATE_MESSAGE,
       text: text

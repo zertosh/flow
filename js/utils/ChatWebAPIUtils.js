@@ -22,6 +22,12 @@ var ChatServerActionCreators = require('../actions/ChatServerActionCreators');
 // the contents of the functions are just trying to simulate client-server
 // communication and server-side processing.
 
+type Message = {
+  threadID: ?string;
+  authorName: string;
+  text: string;
+};
+
 module.exports = {
 
   getAllMessages: function() {
@@ -32,7 +38,7 @@ module.exports = {
     ChatServerActionCreators.receiveAll(rawMessages);
   },
 
-  createMessage: function(message, threadName) {
+  createMessage: function(message: Message, threadName: string) {
     // simulate writing to a database
     var rawMessages = JSON.parse(localStorage.getItem('messages'));
     var timestamp = Date.now();
