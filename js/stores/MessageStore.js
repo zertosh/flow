@@ -18,7 +18,6 @@ var ChatConstants = require('../constants/ChatConstants');
 var ChatMessageUtils = require('../utils/ChatMessageUtils');
 var EventEmitter = require('../events').EventEmitter;
 var ThreadStore = require('../stores/ThreadStore');
-var assign = require('object-assign');
 
 var ActionTypes = ChatConstants.ActionTypes;
 var CHANGE_EVENT = 'change';
@@ -44,7 +43,7 @@ function _markAllInThreadRead(threadID) {
   }
 }
 
-var MessageStore = assign({}, EventEmitter.prototype, {
+var MessageStore = Object.assign({}, EventEmitter.prototype, {
 
   emitChange: function() {
     this.emit(CHANGE_EVENT);

@@ -15,11 +15,10 @@
 
 var ChatConstants = require('../constants/ChatConstants');
 var Dispatcher = require('../flux').Dispatcher;
-var assign = require('object-assign');
 
 var PayloadSources = ChatConstants.PayloadSources;
 
-var ChatAppDispatcher = assign(new Dispatcher(), {
+var ChatAppDispatcher = Object.assign({}, new Dispatcher(), {
 
   /**
    * @param {object} action The details of the action, including the action's
