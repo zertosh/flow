@@ -14,8 +14,8 @@
  */
 
 var ChatThreadActionCreators = require('../actions/ChatThreadActionCreators');
-var React = require('react');
-var cx = require('react/lib/cx');
+var React = require('../react');
+var cx = require('../react/lib/cx');
 
 var ReactPropTypes = React.PropTypes;
 

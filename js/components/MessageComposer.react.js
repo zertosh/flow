@@ -14,7 +14,7 @@
  */
 
 var ChatMessageActionCreators = require('../actions/ChatMessageActionCreators');
-var React = require('react');
+var React = require('../react');
 
 var ENTER_KEY_CODE = 13;
 

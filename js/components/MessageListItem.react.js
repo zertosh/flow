@@ -13,7 +13,7 @@
  *
  */
 
-var React = require('react');
+var React = require('../react');
 
 var ReactPropTypes = React.PropTypes;
 

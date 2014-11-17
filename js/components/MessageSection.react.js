@@ -16,7 +16,7 @@
 var MessageComposer = require('./MessageComposer.react');
 var MessageListItem = require('./MessageListItem.react');
 var MessageStore = require('../stores/MessageStore');
-var React = require('react');
+var React = require('../react');
 var ThreadStore = require('../stores/ThreadStore');
 
 function getStateFromStores() {
