@@ -38,12 +38,13 @@ module.exports = {
     ChatServerActionCreators.receiveAll(rawMessages);
   },
 
-  createMessage: function(message: Message, threadName: string) {
+  createMessage: function(message: Message, optThreadName?: string) {
     // simulate writing to a database
     var rawMessages = JSON.parse(localStorage.getItem('messages'));
     var timestamp = Date.now();
     var id = 'm_' + timestamp;
     var threadID = message.threadID || ('t_' + Date.now());
+    var threadName = optThreadName || 'New Conversation';
     var createdMessage = {
       id: id,
       threadID: threadID,
