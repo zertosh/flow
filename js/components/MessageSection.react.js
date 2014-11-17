@@ -73,10 +73,12 @@ var MessageSection = React.createClass({
   },
 
   render: function(): any {
+    var thread = this.state.thread;
+    var name = thread ? thread.name : "";
     var messageListItems = this.state.messages.map(getMessageListItem);
     return (
       <div className="message-section">
-        <h3 className="message-thread-heading">{this.state.thread.name}</h3>
+        <h3 className="message-thread-heading">{name}</h3>
         <ul className="message-list" ref="messageList">
           {messageListItems}
         </ul>
@@ -85,7 +87,8 @@ var MessageSection = React.createClass({
     );
   },
 
-  componentDidUpdate: function() {
+  componentDidUpdate: function(nextProps: any, nextState?: any,
+                               nextContext?: any, component?: any) {
     this._scrollToBottom();
   },
 
