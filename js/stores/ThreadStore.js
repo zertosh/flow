@@ -60,7 +60,7 @@ var ThreadStore = Object.assign({}, EventEmitter.prototype, {
     rawMessages.forEach(function(message) {
       var threadID = message.threadID;
       var thread = _threads[threadID];
-      if (thread && thread.lastTimestamp > message.timestamp) {
+      if (thread && thread.lastMessage.date.getTime() > message.timestamp) {
         return;
       }
       _threads[threadID] = {
@@ -129,7 +129,12 @@ var ThreadStore = Object.assign({}, EventEmitter.prototype, {
   },
 
   getCurrent: function(): ?Thread {
-    return this.get(this.getCurrentID());
+    var currentID = this.getCurrentID();
+    if (currentID) {
+      return this.get(currentID);
+    } else {
+      return null;
+    }
   }
 
 });
