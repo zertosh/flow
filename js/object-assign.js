@@ -8,26 +8,11 @@
  * FACEBOOK BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN
  * AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- *
- * @flow
- *
  */
 
-// This file bootstraps the entire application.
-
-require('./object-assign');
-
-var ChatApp = require('./components/ChatApp.react');
-var ChatExampleData = require('./ChatExampleData');
-var ChatWebAPIUtils = require('./utils/ChatWebAPIUtils');
-var React = require('react');
-window.React = React; // export for http://fb.me/react-devtools
-
-ChatExampleData.init(); // load example data into localstorage
-
-ChatWebAPIUtils.getAllMessages();
-
-React.render(
-    <ChatApp />,
-    document.getElementById('react')
-);
+// Make sure that Object.assign exists in the environment.
+// We cannot type object-assign with flow right now. Thus we keep this
+// out of flow's reach.
+if (!Object.assign) {
+  Object.assign = require('object-assign');
+}
