@@ -14,30 +14,19 @@
  */
 
 var ChatThreadActionCreators = require('../actions/ChatThreadActionCreators');
-var React = require('../react');
-var cx = require('../react/lib/cx');
+var React = require('react');
+var cx = require('react/lib/cx');
 
 var ReactPropTypes = React.PropTypes;
 
 var ThreadListItem = React.createClass({
 
   propTypes: {
-    thread: ReactPropTypes.shape({
-      id: ReactPropTypes.string.isRequired,
-      name: ReactPropTypes.string.isRequired,
-      lastMessage: ReactPropTypes.shape({
-        id: ReactPropTypes.string,
-        authorName: ReactPropTypes.string,
-        threadID: ReactPropTypes.string,
-        text: ReactPropTypes.string.isRequired,
-        date: ReactPropTypes.instanceOf(Date).isRequired,
-        isRead: ReactPropTypes.bool
-      }).isRequired
-    }).isRequired,
-    currentThreadID: ReactPropTypes.string.isRequired
+    thread: ReactPropTypes.object,
+    currentThreadID: ReactPropTypes.string
   },
 
-  render: function(): any {
+  render: function() {
     var thread = this.props.thread;
     var lastMessage = thread.lastMessage;
     return (

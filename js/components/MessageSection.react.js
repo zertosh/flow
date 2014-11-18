@@ -16,28 +16,8 @@
 var MessageComposer = require('./MessageComposer.react');
 var MessageListItem = require('./MessageListItem.react');
 var MessageStore = require('../stores/MessageStore');
-var React = require('../react');
+var React = require('react');
 var ThreadStore = require('../stores/ThreadStore');
-
-type Message = {
-  id: string;
-  threadID: string;
-  authorName: string;
-  date: Date;
-  text: string;
-  isRead: boolean;
-};
-
-type Thread = {
-  id: string;
-  name: string;
-  lastMessage: Message;
-};
-
-type MessageSectionState = {
-  messages: Array<Message>;
-  thread: ?Thread;
-};
 
 function getStateFromStores() {
   return {
@@ -57,7 +37,7 @@ function getMessageListItem(message) {
 
 var MessageSection = React.createClass({
 
-  getInitialState: function(): MessageSectionState {
+  getInitialState: function() {
     return getStateFromStores();
   },
 
@@ -72,13 +52,11 @@ var MessageSection = React.createClass({
     ThreadStore.removeChangeListener(this._onChange);
   },
 
-  render: function(): any {
-    var thread = this.state.thread;
-    var name = thread ? thread.name : "";
+  render: function() {
     var messageListItems = this.state.messages.map(getMessageListItem);
     return (
       <div className="message-section">
-        <h3 className="message-thread-heading">{name}</h3>
+        <h3 className="message-thread-heading">{this.state.thread.name}</h3>
         <ul className="message-list" ref="messageList">
           {messageListItems}
         </ul>
@@ -87,8 +65,7 @@ var MessageSection = React.createClass({
     );
   },
 
-  componentDidUpdate: function(nextProps: any, nextState?: any,
-                               nextContext?: any, component?: any) {
+  componentDidUpdate: function() {
     this._scrollToBottom();
   },
 

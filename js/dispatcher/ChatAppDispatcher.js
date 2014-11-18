@@ -14,60 +14,18 @@
  */
 
 var ChatConstants = require('../constants/ChatConstants');
-var Dispatcher = require('../flux').Dispatcher;
-
-type RawMessage = {
-  id: string;
-  threadID: string;
-  authorName: string;
-  timestamp: number;
-  text: string;
-};
-
-type ServerRecieveRawMessagesAction = {
-  type: any;
-  rawMessages: Array<RawMessage>;
-};
-
-type ServerRecieveRawCreatedMessageAction = {
-  type: any;
-  rawMessage: RawMessage;
-};
-
-type ServerAction = ServerRecieveRawMessagesAction
-                  | ServerRecieveRawCreatedMessageAction;
-
-type ViewCreateMessageAction = {
-  type: any;
-  text: string;
-};
-
-type ViewClickThreadAction = {
-  type: any;
-  threadID: string;
-};
-
-type ViewAction = ViewCreateMessageAction | ViewClickThreadAction;
-
-type PayloadType = {
-  source: any;
-  action: ViewCreateMessageAction
-        | ViewClickThreadAction
-        | ServerRecieveRawMessagesAction
-        | ServerRecieveRawCreatedMessageAction;
-};
+var Dispatcher = require('flux').Dispatcher;
+var assign = require('object-assign');
 
 var PayloadSources = ChatConstants.PayloadSources;
 
-var dispatcherInstance: Dispatcher<PayloadType> = new Dispatcher();
-
-var ChatAppDispatcher = Object.assign({}, new Dispatcher(), {
+var ChatAppDispatcher = assign(new Dispatcher(), {
 
   /**
    * @param {object} action The details of the action, including the action's
    * type and additional data coming from the server.
    */
-  handleServerAction: function(action: ServerAction) {
+  handleServerAction: function(action) {
     var payload = {
       source: PayloadSources.SERVER_ACTION,
       action: action
@@ -79,7 +37,7 @@ var ChatAppDispatcher = Object.assign({}, new Dispatcher(), {
    * @param {object} action The details of the action, including the action's
    * type and additional data coming from the view.
    */
-  handleViewAction: function(action: ViewAction) {
+  handleViewAction: function(action) {
     var payload = {
       source: PayloadSources.VIEW_ACTION,
       action: action

@@ -16,51 +16,22 @@
 var ChatAppDispatcher = require('../dispatcher/ChatAppDispatcher');
 var ChatConstants = require('../constants/ChatConstants');
 var ChatMessageUtils = require('../utils/ChatMessageUtils');
-var EventEmitter = require('../events').EventEmitter;
-
-type RawMessage = {
-  id: string;
-  threadID: string;
-  threadName: string;
-  authorName: string;
-  timestamp: number;
-  text: string;
-};
-
-type Message = {
-  id: string;
-  threadID: string;
-  authorName: string;
-  date: Date;
-  text: string;
-  isRead: boolean;
-};
-
-type Thread = {
-  id: string;
-  name: string;
-  lastMessage: Message;
-};
-
-type ThreadMap = {
-  [index: string]: Thread;
-};
-
-type Callback = () => void;
+var EventEmitter = require('events').EventEmitter;
+var assign = require('object-assign');
 
 var ActionTypes = ChatConstants.ActionTypes;
 var CHANGE_EVENT = 'change';
 
 var _currentID = null;
-var _threads: ThreadMap = {};
+var _threads = {};
 
-var ThreadStore = Object.assign({}, EventEmitter.prototype, {
+var ThreadStore = assign({}, EventEmitter.prototype, {
 
-  init: function(rawMessages: Array<RawMessage>) {
+  init: function(rawMessages) {
     rawMessages.forEach(function(message) {
       var threadID = message.threadID;
       var thread = _threads[threadID];
-      if (thread && thread.lastMessage.date.getTime() > message.timestamp) {
+      if (thread && thread.lastTimestamp > message.timestamp) {
         return;
       }
       _threads[threadID] = {
@@ -85,29 +56,29 @@ var ThreadStore = Object.assign({}, EventEmitter.prototype, {
   /**
    * @param {function} callback
    */
-  addChangeListener: function(callback: Callback) {
+  addChangeListener: function(callback) {
     this.on(CHANGE_EVENT, callback);
   },
 
   /**
    * @param {function} callback
    */
-  removeChangeListener: function(callback: Callback) {
+  removeChangeListener: function(callback) {
     this.removeListener(CHANGE_EVENT, callback);
   },
 
   /**
    * @param {string} id
    */
-  get: function(id: string): ?Thread {
+  get: function(id) {
     return _threads[id];
   },
 
-  getAll: function(): ThreadMap {
+  getAll: function() {
     return _threads;
   },
 
-  getAllChrono: function(): Array<Thread> {
+  getAllChrono: function() {
     var orderedThreads = [];
     for (var id in _threads) {
       var thread = _threads[id];
@@ -124,17 +95,17 @@ var ThreadStore = Object.assign({}, EventEmitter.prototype, {
     return orderedThreads;
   },
 
-  getCurrentID: function(): ?string {
+  getCurrentID: function() {
     return _currentID;
   },
 
-  getCurrent: function(): ?Thread {
+  getCurrent: function() {
     return this.get(this.getCurrentID());
   }
 
 });
 
-ThreadStore.dispatchToken = ChatAppDispatcher.register(function(payload: any) {
+ThreadStore.dispatchToken = ChatAppDispatcher.register(function(payload) {
   var action = payload.action;
 
   switch(action.type) {

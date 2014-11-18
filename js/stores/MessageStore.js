@@ -16,37 +16,14 @@
 var ChatAppDispatcher = require('../dispatcher/ChatAppDispatcher');
 var ChatConstants = require('../constants/ChatConstants');
 var ChatMessageUtils = require('../utils/ChatMessageUtils');
-var EventEmitter = require('../events').EventEmitter;
+var EventEmitter = require('events').EventEmitter;
 var ThreadStore = require('../stores/ThreadStore');
-
-type Message = {
-  id: string;
-  threadID: string;
-  authorName: string;
-  date: Date;
-  text: string;
-  isRead: boolean;
-};
-
-type MessageMap = {
-  [index: string]: Message;
-};
-
-type Callback = () => void;
-
-type CreatedMessage = {
-  id: string;
-  threadID: ?string;
-  authorName: string;
-  date: Date;
-  text: string;
-  isRead: boolean;
-};
+var assign = require('object-assign');
 
 var ActionTypes = ChatConstants.ActionTypes;
 var CHANGE_EVENT = 'change';
 
-var _messages: MessageMap = {};
+var _messages = {};
 
 function _addMessages(rawMessages) {
   rawMessages.forEach(function(message) {
@@ -67,7 +44,7 @@ function _markAllInThreadRead(threadID) {
   }
 }
 
-var MessageStore = Object.assign({}, EventEmitter.prototype, {
+var MessageStore = assign({}, EventEmitter.prototype, {
 
   emitChange: function() {
     this.emit(CHANGE_EVENT);
@@ -76,22 +53,22 @@ var MessageStore = Object.assign({}, EventEmitter.prototype, {
   /**
    * @param {function} callback
    */
-  addChangeListener: function(callback: Callback) {
+  addChangeListener: function(callback) {
     this.on(CHANGE_EVENT, callback);
   },
 
-  get: function(id: string): ?Message {
+  get: function(id) {
     return _messages[id];
   },
 
-  getAll: function(): MessageMap {
+  getAll: function() {
     return _messages;
   },
 
   /**
    * @param {string} threadID
    */
-  getAllForThread: function(threadID: string): Array<Message> {
+  getAllForThread: function(threadID) {
     var threadMessages = [];
     for (var id in _messages) {
       if (_messages[id].threadID === threadID) {
@@ -109,11 +86,11 @@ var MessageStore = Object.assign({}, EventEmitter.prototype, {
     return threadMessages;
   },
 
-  getAllForCurrentThread: function(): Array<Message> {
+  getAllForCurrentThread: function() {
     return this.getAllForThread(ThreadStore.getCurrentID());
   },
 
-  getCreatedMessageData: function(text: string): CreatedMessage {
+  getCreatedMessageData: function(text) {
     var timestamp = Date.now();
     return {
       id: 'm_' + timestamp,
@@ -127,7 +104,7 @@ var MessageStore = Object.assign({}, EventEmitter.prototype, {
 
 });
 
-MessageStore.dispatchToken = ChatAppDispatcher.register(function(payload: any) {
+MessageStore.dispatchToken = ChatAppDispatcher.register(function(payload) {
   var action = payload.action;
 
   switch(action.type) {

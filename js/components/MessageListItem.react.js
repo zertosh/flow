@@ -13,21 +13,17 @@
  *
  */
 
-var React = require('../react');
+var React = require('react');
 
 var ReactPropTypes = React.PropTypes;
 
 var MessageListItem = React.createClass({
 
   propTypes: {
-    message: ReactPropTypes.shape({
-      authorName: ReactPropTypes.string.isRequired,
-      date: ReactPropTypes.instanceOf(Date).isRequired,
-      text: ReactPropTypes.string.isRequired
-    }).isRequired
+    message: ReactPropTypes.object
   },
 
-  render: function(): any {
+  render: function() {
     var message = this.props.message;
     return (
       <li className="message-list-item">

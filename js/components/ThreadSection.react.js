@@ -8,36 +8,13 @@
  * FACEBOOK BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN
  * AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- *
- * @flow
  */
 
-var React = require('../react');
+var React = require('react');
 var MessageStore = require('../stores/MessageStore');
 var ThreadListItem = require('../components/ThreadListItem.react');
 var ThreadStore = require('../stores/ThreadStore');
 var UnreadThreadStore = require('../stores/UnreadThreadStore');
-
-type Message = {
-  id: string;
-  threadID: string;
-  authorName: string;
-  date: Date;
-  text: string;
-  isRead: boolean;
-};
-
-type Thread = {
-  id: string;
-  name: string;
-  lastMessage: Message;
-};
-
-type ThreadSectionState = {
-  threads: Array<Thread>;
-  currentThreadID: ?string;
-  unreadCount: number;
-};
 
 function getStateFromStores() {
   return {
@@ -49,7 +26,7 @@ function getStateFromStores() {
 
 var ThreadSection = React.createClass({
 
-  getInitialState: function(): ThreadSectionState {
+  getInitialState: function() {
     return getStateFromStores();
   },
 
@@ -63,7 +40,7 @@ var ThreadSection = React.createClass({
     UnreadThreadStore.removeChangeListener(this._onChange);
   },
 
-  render: function(): any {
+  render: function() {
     var threadListItems = this.state.threads.map(function(thread) {
       return (
         <ThreadListItem

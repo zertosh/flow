@@ -15,16 +15,15 @@
 
 var ChatAppDispatcher = require('../dispatcher/ChatAppDispatcher');
 var ChatConstants = require('../constants/ChatConstants');
-var EventEmitter = require('../events').EventEmitter;
+var EventEmitter = require('events').EventEmitter;
 var MessageStore = require('../stores/MessageStore');
 var ThreadStore = require('../stores/ThreadStore');
-
-type Callback = () => void;
+var assign = require('object-assign');
 
 var ActionTypes = ChatConstants.ActionTypes;
 var CHANGE_EVENT = 'change';
 
-var UnreadThreadStore = Object.assign({}, EventEmitter.prototype, {
+var UnreadThreadStore = assign({}, EventEmitter.prototype, {
 
   emitChange: function() {
     this.emit(CHANGE_EVENT);
@@ -33,18 +32,18 @@ var UnreadThreadStore = Object.assign({}, EventEmitter.prototype, {
   /**
    * @param {function} callback
    */
-  addChangeListener: function(callback: Callback) {
+  addChangeListener: function(callback) {
     this.on(CHANGE_EVENT, callback);
   },
 
   /**
    * @param {function} callback
    */
-  removeChangeListener: function(callback: Callback) {
+  removeChangeListener: function(callback) {
     this.removeListener(CHANGE_EVENT, callback);
   },
 
-  getCount: function(): number {
+  getCount: function() {
     var threads = ThreadStore.getAll();
     var unreadCount = 0;
     for (var id in threads) {
@@ -57,8 +56,7 @@ var UnreadThreadStore = Object.assign({}, EventEmitter.prototype, {
 
 });
 
-UnreadThreadStore.dispatchToken =
-ChatAppDispatcher.register(function(payload: any) {
+UnreadThreadStore.dispatchToken = ChatAppDispatcher.register(function(payload) {
   ChatAppDispatcher.waitFor([
     ThreadStore.dispatchToken,
     MessageStore.dispatchToken

@@ -14,17 +14,17 @@
  */
 
 var ChatMessageActionCreators = require('../actions/ChatMessageActionCreators');
-var React = require('../react');
+var React = require('react');
 
 var ENTER_KEY_CODE = 13;
 
 var MessageComposer = React.createClass({
 
-  getInitialState: function(): {text: string; } {
+  getInitialState: function() {
     return {text: ''};
   },
 
-  render: function(): any {
+  render: function() {
     return (
       <textarea
         className="message-composer"
@@ -36,11 +36,11 @@ var MessageComposer = React.createClass({
     );
   },
 
-  _onChange: function(event: any, value: any) {
+  _onChange: function(event, value) {
     this.setState({text: event.target.value});
   },
 
-  _onKeyDown: function(event: any) {
+  _onKeyDown: function(event) {
     if (event.keyCode === ENTER_KEY_CODE) {
       event.preventDefault();
       var text = this.state.text.trim();
