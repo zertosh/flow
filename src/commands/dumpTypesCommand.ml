@@ -36,7 +36,8 @@ let spec = {
         ~doc:"Specify (fake) path to file when reading data from stdin"
     |> flag "--raw" no_arg
         ~doc:"Output raw representation of types (implies --json)"
-    |> anon "file" (optional string) ~doc:"[FILE]"
+    |> anon "files" (optional (list_of string))
+        ~doc:"Files to type"
   )
 }
 
@@ -97,25 +98,35 @@ let handle_error (loc, err) ~json ~pretty ~strip_root =
     prerr_endlinef "%s:\n%s" loc err
   )
 
-let main option_values root json pretty strip_root path include_raw filename () =
+let main option_values root_flag json pretty strip_root path include_raw filenames () =
   let json = json || pretty || include_raw in
-  let file = get_file_from_filename_or_stdin path filename in
   let root = guess_root (
-    match root with
+    match root_flag with
     | Some root -> Some root
-    | None -> ServerProt.path_of_input file
+    | None -> (match filenames with
+      | Some (first_file::_) -> Some first_file
+      | _ -> None)
   ) in
 
   let strip_root = if strip_root then Some root else None in
 
+  let files = match filenames with
+    | Some filenames ->
+      filenames
+      |> List.map (fun s -> get_file_from_filename_or_stdin path (Some s))
+    | _ -> [get_file_from_filename_or_stdin path None]
+  in
   let ic, oc = connect option_values root in
   ServerProt.cmd_to_channel oc
-    (ServerProt.DUMP_TYPES (file, include_raw, strip_root));
+    (ServerProt.DUMP_TYPES (files, include_raw, strip_root));
 
-  match (Timeout.input_value ic : ServerProt.dump_types_response) with
-  | Err err ->
-      handle_error err ~json ~pretty ~strip_root
-  | OK resp ->
-      handle_response resp ~json ~pretty ~strip_root
+  let results = (Timeout.input_value ic : ServerProt.dump_types_response) in
+  List.iter (fun result ->
+    match result with
+      | Err err ->
+    handle_error err ~json ~pretty ~strip_root
+      | OK resp ->
+    handle_response resp ~json ~pretty ~strip_root
+  ) results
 
 let command = CommandSpec.command spec main

@@ -250,7 +250,7 @@ module FlowProgram : Server.SERVER_PROGRAM = struct
     Marshal.to_channel oc (response: ServerProt.infer_type_response) [];
     flush oc
 
-  let dump_types ~options file_input include_raw strip_root oc =
+  let dump_types ~options files include_raw strip_root oc =
     (* Print type using Flow type syntax *)
     let printer = Type_printer.string_of_t in
     (* Print raw representation of types as json; as it turns out, the
@@ -261,20 +261,21 @@ module FlowProgram : Server.SERVER_PROGRAM = struct
         then Some (Debug_js.jstr_of_t ~depth:max_int ~strip_root c t)
         else None
       in
-    let file = ServerProt.file_input_get_filename file_input in
-    let file = Loc.SourceFile file in
-    let resp =
-    (try
-       let content = ServerProt.file_input_get_content file_input in
-       let cx = match Types_js.typecheck_contents ~options content file with
-       | _, Some cx, _, _ -> cx
-       | _  -> failwith "Couldn't parse file" in
-      OK (Query_types.dump_types printer raw_printer cx)
-    with exn ->
-      let loc = mk_loc file 0 0 in
-      let err = (loc, Printexc.to_string exn) in
-      Err err
-    ) in
+    let resp = List.map (fun file_input ->
+      let file = ServerProt.file_input_get_filename file_input in
+      let file = Loc.SourceFile file in
+      (try
+         let content = ServerProt.file_input_get_content file_input in
+         let cx = match Types_js.typecheck_contents ~options content file with
+         | _, Some cx, _, _ -> cx
+         | _  -> failwith "Couldn't parse file" in
+        OK (Query_types.dump_types printer raw_printer cx)
+      with exn ->
+        let loc = mk_loc file 0 0 in
+        let err = (loc, Printexc.to_string exn) in
+        Err err
+      )
+    ) files in
     Marshal.to_channel oc (resp : ServerProt.dump_types_response) [];
     flush oc
 

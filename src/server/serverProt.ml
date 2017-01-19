@@ -38,7 +38,10 @@ type command =
     bool * (* graphml *)
     bool (* force *)
 | COVERAGE of file_input * bool (* force *)
-| DUMP_TYPES of file_input * bool (* filename, include raw *) * (Path.t option) (* strip_root *)
+| DUMP_TYPES of
+  file_input list * (* filename *)
+  bool * (* include raw *)
+  (Path.t option) (* strip_root *)
 | ERROR_OUT_OF_DATE
 | FIND_MODULE of string * string
 | FIND_REFS of file_input * int * int (* filename, line, char *)
@@ -75,7 +78,7 @@ type coverage_response = (
 type dump_types_response = (
   (Loc.t * string * string * string option * Reason.t list) list,
   Loc.t * string
-) Utils_js.ok_or_err
+) Utils_js.ok_or_err list
 type infer_type_response = (
   Loc.t * string option * string option * Reason.t list,
   Loc.t * string
