@@ -261,7 +261,7 @@ module FlowProgram : Server.SERVER_PROGRAM = struct
         then Some (Debug_js.jstr_of_t ~depth:max_int ~strip_root c t)
         else None
       in
-    let resp = List.map (fun file_input ->
+    let resp = List.fold_left (fun (oks, errors) file_input ->
       let file = ServerProt.file_input_get_filename file_input in
       let file = Loc.SourceFile file in
       (try
@@ -269,13 +269,13 @@ module FlowProgram : Server.SERVER_PROGRAM = struct
          let cx = match Types_js.typecheck_contents ~options content file with
          | _, Some cx, _, _ -> cx
          | _  -> failwith "Couldn't parse file" in
-        OK (Query_types.dump_types printer raw_printer cx)
+         ((Query_types.dump_types printer raw_printer cx) :: oks), errors
       with exn ->
         let loc = mk_loc file 0 0 in
         let err = (loc, Printexc.to_string exn) in
-        Err err
+        oks, ((Err err) :: errors)
       )
-    ) files in
+    ) ([], []) files in
     Marshal.to_channel oc (resp : ServerProt.dump_types_response) [];
     flush oc
 
